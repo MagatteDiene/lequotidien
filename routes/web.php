@@ -3,11 +3,15 @@
 use App\Http\Controllers\AccueilController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SoapController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\CategorieController as AdminCategorieController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ApiTokenController;
 use Illuminate\Support\Facades\Route;
+
+// SOAP Service (CSRF exclu dans bootstrap/app.php)
+Route::match(['get', 'post'], '/soap', [SoapController::class, 'handle'])->name('soap');
 
 // Publiques
 Route::get('/', [AccueilController::class, 'index'])->name('accueil');
