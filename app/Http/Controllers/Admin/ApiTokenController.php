@@ -20,9 +20,11 @@ class ApiTokenController extends Controller
             'nom' => 'required|string|max:255',
         ]);
 
-        ApiToken::generer($request->nom, auth()->id());
+        $token = ApiToken::generer($request->nom, auth()->id());
 
-        return redirect()->route('admin.tokens.index')->with('success', 'Token généré.');
+        return redirect()->route('admin.tokens.index')
+            ->with('success', 'Token généré.')
+            ->with('new_token', $token->token);
     }
 
     public function toggle(ApiToken $apiToken)

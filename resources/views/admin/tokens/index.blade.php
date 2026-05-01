@@ -16,6 +16,21 @@
 
         <hr style="border: 0; border-top: 1px solid #eef0f2; margin-bottom: 30px;">
 
+        {{-- Token affiché en clair après génération --}}
+        @if(session('new_token'))
+            <div style="background: #fff8e1; border: 2px solid #f59e0b; border-radius: 10px; padding: 20px; margin-bottom: 24px;">
+                <div style="font-weight: 800; color: #92400e; margin-bottom: 8px;">
+                    ⚠ Copiez ce token maintenant — il ne sera plus affiché en clair après rechargement.
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <code id="new-token-value" style="background: #fff; border: 1px solid #f59e0b; padding: 10px 16px; border-radius: 6px; font-size: 0.95rem; word-break: break-all; flex: 1;">{{ session('new_token') }}</code>
+                    <button onclick="copyToken('new-token-value', this)" class="btn btn-primary" style="white-space: nowrap;">
+                        Copier le token
+                    </button>
+                </div>
+            </div>
+        @endif
+
         <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 8px;">Tokens actifs</h2>
         <table>
             <thead>
@@ -32,7 +47,12 @@
                 @forelse($tokens as $token)
                     <tr>
                         <td><strong>{{ $token->nom }}</strong></td>
-                        <td><code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px;">{{ Str::limit($token->token, 20) }}...</code></td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <code id="token-{{ $token->id }}" style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; word-break: break-all;">{{ $token->token }}</code>
+                                <button onclick="copyToken('token-{{ $token->id }}', this)" class="btn btn-secondary btn-sm" style="white-space: nowrap;">Copier</button>
+                            </div>
+                        </td>
                         <td>{{ $token->createur->name }}</td>
                         <td>{{ $token->created_at->format('d/m/Y') }}</td>
                         <td>
@@ -65,4 +85,33 @@
             </tbody>
         </table>
     </div>
+@push('scripts')
+<script>
+function copyToken(elementId, btn) {
+    const text = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        const original = btn.innerText;
+        btn.innerText = '✓ Copié !';
+        btn.style.background = '#4CAF50';
+        btn.style.color = 'white';
+        setTimeout(() => {
+            btn.innerText = original;
+            btn.style.background = '';
+            btn.style.color = '';
+        }, 2000);
+    }).catch(() => {
+        // Fallback pour navigateurs sans clipboard API
+        const el = document.getElementById(elementId);
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        btn.innerText = '✓ Copié !';
+        setTimeout(() => { btn.innerText = 'Copier'; }, 2000);
+    });
+}
+</script>
+@endpush
 @endsection
