@@ -31,6 +31,7 @@
             </div>
         @endif
 
+        
         <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 8px;">Tokens actifs</h2>
         <table>
             <thead>
