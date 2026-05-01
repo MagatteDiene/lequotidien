@@ -27,7 +27,10 @@
                         À la une
                     </span>
                 </div>
-                <h1 style="font-size: 2.2rem; line-height: 1.25; margin-bottom: 18px; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px;">{{ $topArticle->titre }}</h1>
+                <h1 style="font-size: 2.2rem; line-height: 1.25; margin-bottom: 18px; font-weight: 900; letter-spacing: -0.5px;">
+                    <a href="{{ route('article.show', $topArticle->slug) }}" style="text-decoration: none; color: var(--text-main); transition: color 0.3s;"
+                       onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-main)'">{{ $topArticle->titre }}</a>
+                </h1>
                 <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 32px; line-height: 1.7;">{{ Str::limit($topArticle->resume, 160) }}</p>
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
                     <a href="{{ route('article.show', $topArticle->slug) }}" class="btn-modern">Lire l'article →</a>

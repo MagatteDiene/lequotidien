@@ -38,8 +38,7 @@
             <div class="form-group">
                 <label for="role" class="form-label">Rôle *</label>
                 <select name="role" id="role" class="form-control" required>
-                    <option value="visiteur" {{ old('role') == 'visiteur' ? 'selected' : '' }}>Visiteur</option>
-                    <option value="editeur" {{ old('role') == 'editeur' ? 'selected' : '' }}>Éditeur</option>
+                    <option value="editeur" {{ old('role', 'editeur') == 'editeur' ? 'selected' : '' }}>Éditeur</option>
                     <option value="administrateur" {{ old('role') == 'administrateur' ? 'selected' : '' }}>Administrateur</option>
                 </select>
                 @error('role') <div class="form-error">{{ $message }}</div> @enderror

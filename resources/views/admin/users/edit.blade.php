@@ -45,7 +45,6 @@
             <div class="form-group">
                 <label for="role" class="form-label">Rôle *</label>
                 <select name="role" id="role" class="form-control" required {{ $user->id === auth()->id() ? 'disabled' : '' }}>
-                    <option value="visiteur"       {{ old('role', $user->role) == 'visiteur'       ? 'selected' : '' }}>Visiteur</option>
                     <option value="editeur"        {{ old('role', $user->role) == 'editeur'        ? 'selected' : '' }}>Éditeur</option>
                     <option value="administrateur" {{ old('role', $user->role) == 'administrateur' ? 'selected' : '' }}>Administrateur</option>
                 </select>

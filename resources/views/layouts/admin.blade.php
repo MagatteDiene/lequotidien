@@ -337,7 +337,6 @@
 
         .badge-admin { background: #fff3f0; color: var(--primary); }
         .badge-editeur { background: #e3f2fd; color: #1565c0; }
-        .badge-visiteur { background: #f5f5f5; color: #757575; }
         .badge-administrateur { background: #fff3f0; color: var(--primary); }
         .badge-on { background: #e8f5e9; color: #2e7d32; }
         .badge-off { background: #f5f5f5; color: #9e9e9e; }
