@@ -62,8 +62,16 @@
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 40px; padding-bottom: 32px; border-bottom: var(--border);">
                     <div class="avatar-initials" style="width: 50px; height: 50px; background: {{ $bg }}; font-size: 1rem; border-radius: 16px;">{{ $initials }}</div>
                     <div>
-                        <div style="font-weight: 800; color: var(--text-main); font-size: 1rem;">{{ ($article->auteur?->name ?? 'Anonyme') }}</div>
-                        <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600; margin-top: 2px; text-transform: capitalize;">{{ $article->auteur->role ?? 'Journaliste' }}</div>
+                        <div style="font-weight: 800; color: var(--text-main); font-size: 1rem;">{{ $article->auteur?->name ?? 'Anonyme' }}</div>
+                        <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">
+                            @php
+                                echo match($article->auteur?->role) {
+                                    'administrateur' => 'Rédacteur en chef',
+                                    'editeur'        => 'Journaliste',
+                                    default          => 'Journaliste',
+                                };
+                            @endphp
+                        </div>
                     </div>
                 </div>
 
