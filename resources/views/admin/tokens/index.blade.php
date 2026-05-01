@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="card">
-        <h2 class="font-serif mb-1">Générer un nouveau token</h2>
+        <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 8px;">Générer un nouveau token</h2>
         <form action="{{ route('admin.tokens.store') }}" method="POST" style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 30px;">
             @csrf
             <div class="form-group" style="margin-bottom: 0; flex: 1;">
@@ -14,9 +14,9 @@
             <button type="submit" class="btn btn-primary" style="height: 48px;">Générer</button>
         </form>
 
-        <hr style="border: 0; border-top: 1px solid var(--gris-clair); margin-bottom: 30px;">
+        <hr style="border: 0; border-top: 1px solid #eef0f2; margin-bottom: 30px;">
 
-        <h2 class="font-serif mb-1">Tokens actifs</h2>
+        <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 8px;">Tokens actifs</h2>
         <table>
             <thead>
                 <tr>

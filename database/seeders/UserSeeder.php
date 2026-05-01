@@ -13,25 +13,18 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Administrateur',
             'email' => 'admin@news.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('123'),
             'role' => 'administrateur',
             'actif' => true,
         ]);
 
         User::create([
-            'name' => 'Éditeur',
-            'email' => 'editeur@news.com',
-            'password' => Hash::make('password'),
+            'name' => 'Magatte',
+            'email' => 'magatte@news.com',
+            'password' => Hash::make('123'),
             'role' => 'editeur',
             'actif' => true,
         ]);
 
-        User::create([
-            'name' => 'Visiteur',
-            'email' => 'visiteur@news.com',
-            'password' => Hash::make('password'),
-            'role' => 'visiteur',
-            'actif' => true,
-        ]);
     }
 }

@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->paginate(10);
+        $users = User::withCount('articles')->latest()->paginate(10);
         return view('admin.users.index', compact('users'));
     }
 
@@ -23,22 +23,22 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:visiteur,editeur,administrateur',
-            'actif' => 'boolean',
+            'role'     => 'required|in:visiteur,editeur,administrateur',
+            'actif'    => 'boolean',
         ]);
 
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'actif' => $request->has('actif'),
+            'role'     => $request->role,
+            'actif'    => $request->has('actif'),
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'Utilisateur créé.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur créé avec succès.');
     }
 
     public function edit(User $user)
@@ -49,20 +49,29 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|in:visiteur,editeur,administrateur',
-            'actif' => 'boolean',
+            'role'     => 'required|in:visiteur,editeur,administrateur',
+            'actif'    => 'boolean',
         ]);
 
+        // Empêcher de rétrograder le dernier administrateur
+        if ($user->role === 'administrateur' && $request->role !== 'administrateur') {
+            $adminCount = User::where('role', 'administrateur')->count();
+            if ($adminCount <= 1) {
+                return back()->with('error', 'Impossible de rétrograder le seul administrateur du système.');
+            }
+        }
+
         $data = [
-            'name' => $request->name,
+            'name'  => $request->name,
             'email' => $request->email,
         ];
 
+        // Ne pas modifier son propre rôle ni statut actif
         if ($user->id !== auth()->id()) {
-            $data['role'] = $request->role;
+            $data['role']  = $request->role;
             $data['actif'] = $request->has('actif');
         }
 
@@ -81,7 +90,15 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
         }
 
+        // Protéger le dernier administrateur
+        if ($user->role === 'administrateur') {
+            $adminCount = User::where('role', 'administrateur')->count();
+            if ($adminCount <= 1) {
+                return redirect()->back()->with('error', 'Impossible de supprimer le seul administrateur du système.');
+            }
+        }
+
         $user->delete();
-        return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé. Ses articles ont été conservés.');
     }
 }
