@@ -3,8 +3,10 @@ FROM php:8.2-cli
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
+    libxml2-dev \
     zip \
     unzip \
+    git \
     && docker-php-ext-install pdo pdo_pgsql pgsql soap zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -16,7 +18,8 @@ COPY . .
 
 RUN cp .env.example .env
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
+    && php artisan package:discover --ansi || true
 
 RUN chmod -R 775 storage bootstrap/cache
 
