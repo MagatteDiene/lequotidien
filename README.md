@@ -2,64 +2,56 @@
 <img width="1901" height="1025" alt="image" src="https://github.com/user-attachments/assets/b9418272-c45c-4d3f-a9fb-fe87f5e85ff4" />
 <img width="1817" height="1025" alt="image" src="https://github.com/user-attachments/assets/d78da029-3da3-4834-bbef-399824baf3ea" />
 
+# Le•Quotidien
 
+> Projet réalisé dans le cadre de l'examen d'**Architecture Logicielle**.
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Application de gestion d'un journal en ligne, développée avec **Laravel 12** et **PostgreSQL**.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Fonctionnalités
 
-## About Laravel
+- Interface publique : lecture des articles, navigation par catégorie
+- Back-office : gestion des articles, catégories, utilisateurs et tokens API
+- Service REST : exposition des articles en JSON ou XML
+- Service SOAP : gestion des utilisateurs pour applications clientes
+- Authentification par rôles : `editeur` et `administrateur`
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Installation locale
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan storage:link
+php artisan serve
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Configurer `.env` avec les paramètres de base de données PostgreSQL.
 
-## Learning Laravel
+## Services web
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+**REST** — base URL : `/api`  
+Authentification : en-tête `X-Api-Token` ou paramètre `?token=`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Endpoint | Description |
+|---|---|
+| GET /api/articles | Tous les articles publiés |
+| GET /api/articles/categories | Articles groupés par catégorie |
+| GET /api/articles/categorie/{slug} | Articles d'une catégorie |
 
-## Laravel Sponsors
+Ajouter `?format=xml` pour obtenir la réponse en XML.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+**SOAP** — endpoint : `/soap` (WSDL disponible en GET)  
+Méthodes : `authentifierUtilisateur`, `listerUtilisateurs`, `ajouterUtilisateur`, `modifierUtilisateur`, `supprimerUtilisateur`
 
-### Premium Partners
+Voir `CLIENT_DEVELOPER_GUIDE.txt` pour le détail d'intégration.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Déploiement
 
-## Contributing
+Un `Dockerfile` et un `render.yaml` sont fournis pour un déploiement conteneurisé (ex: Render).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Documentation
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- `DOCUMENTATION.txt` — documentation technique complète
+- `CLIENT_DEVELOPER_GUIDE.txt` — guide d'intégration du service SOAP
