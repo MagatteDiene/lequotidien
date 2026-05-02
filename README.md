@@ -47,9 +47,6 @@ Méthodes : `authentifierUtilisateur`, `listerUtilisateurs`, `ajouterUtilisateur
 
 Voir `CLIENT_DEVELOPER_GUIDE.txt` pour le détail d'intégration.
 
-## Déploiement
-
-Un `Dockerfile` et un `render.yaml` sont fournis pour un déploiement conteneurisé (ex: Render).
 
 ## Documentation
 
