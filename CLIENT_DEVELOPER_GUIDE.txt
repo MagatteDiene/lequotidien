@@ -1,0 +1,73 @@
+GUIDE DÉVELOPPEUR CLIENT — Le•Quotidien
+========================================
+
+Service SOAP — Gestion des utilisateurs
+----------------------------------------
+
+Endpoint : POST http://<SERVEUR>/soap
+WSDL     : GET  http://<SERVEUR>/soap
+
+Remplace <SERVEUR> par l'adresse du serveur (ex: localhost/newsite/public en local).
+
+
+MÉTHODES DISPONIBLES
+--------------------
+
+1. authentifierUtilisateur(email, password)
+   - Pas besoin de token
+   - Retourne : { succes, message, data }
+     data (si succes=true) : JSON { id, nom, email, role }
+   - Vérifie que role == "administrateur" pour autoriser l'accès à la gestion
+
+2. listerUtilisateurs(token)
+   - Retourne : { succes, message, data }
+     data (si succes=true) : JSON array [ { id, nom, email, role, actif }, ... ]
+
+3. ajouterUtilisateur(token, nom, email, password, role)
+   - role accepte : "editeur" ou "administrateur"
+   - Retourne : { succes, message }
+
+4. modifierUtilisateur(token, id, nom, email, role)
+   - id est un entier
+   - Retourne : { succes, message }
+
+5. supprimerUtilisateur(token, id)
+   - id est un entier
+   - Retourne : { succes, message }
+
+
+FLUX ATTENDU DE L'APPLICATION
+------------------------------
+
+Démarrage
+  -> Saisie email + mot de passe
+  -> Appel : authentifierUtilisateur(email, password)
+      -> succes=false  : afficher erreur et quitter
+      -> role != "administrateur" : accès refusé, quitter
+      -> role == "administrateur" : accéder au menu de gestion
+
+Menu
+  -> Lister     : listerUtilisateurs(token)
+  -> Ajouter    : ajouterUtilisateur(token, nom, email, password, role)
+  -> Modifier   : modifierUtilisateur(token, id, nom, email, role)
+  -> Supprimer  : supprimerUtilisateur(token, id)
+
+
+CODES DE RETOUR
+---------------
+
+succes=true  : opération réussie
+succes=false : message contient la raison de l'échec
+
+Erreurs courantes :
+  "Token invalide ou expiré."          -> token incorrect ou périmé
+  "Identifiants incorrects."           -> mauvais email/mot de passe
+  "Cet email est déjà utilisé."        -> doublon
+  "Impossible de supprimer le seul administrateur." -> protection système
+
+
+NOTE
+----
+
+Le token API est fourni séparément par l'administrateur du site.
+Il doit être passé en premier paramètre de chaque méthode (sauf authentifierUtilisateur).

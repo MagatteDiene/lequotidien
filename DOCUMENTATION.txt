@@ -1,0 +1,135 @@
+DOCUMENTATION TECHNIQUE — Le•Quotidien
+=======================================
+
+Application de gestion d'un journal en ligne.
+Développée avec Laravel 12 (PHP 8.2), PostgreSQL.
+
+
+ARCHITECTURE
+------------
+
+Rôles utilisateurs :
+  - editeur       : accès au back-office (articles, catégories)
+  - administrateur: accès complet (+ gestion des utilisateurs et tokens API)
+
+Structure principale :
+  - Interface publique  : lecture des articles, navigation par catégorie
+  - Back-office admin   : gestion des articles, catégories, utilisateurs, tokens
+  - Service REST        : exposition des articles en JSON ou XML
+  - Service SOAP        : gestion des utilisateurs (pour applications clientes)
+
+
+INTERFACE PUBLIQUE
+------------------
+
+  Page d'accueil      : affiche les articles publiés (mise en avant du dernier)
+  Page article        : lecture d'un article complet
+  Page catégorie      : liste des articles d'une catégorie
+
+URL de base : http://<SERVEUR>/
+
+
+BACK-OFFICE ADMINISTRATEUR
+--------------------------
+
+Accès via /login (email + mot de passe)
+
+Sections disponibles :
+  /admin                  Tableau de bord (statistiques)
+  /admin/articles         Gestion des articles (CRUD)
+  /admin/categories       Gestion des catégories (CRUD)
+  /admin/users            Gestion des utilisateurs (admins seulement)
+  /admin/tokens           Gestion des tokens API (admins seulement)
+
+Statuts d'article :
+  - brouillon  : non visible publiquement
+  - publie     : visible sur le site
+
+
+SERVICE REST
+------------
+
+Base URL : http://<SERVEUR>/api
+
+Authentification : token requis dans tous les appels
+  En-tête HTTP  : X-Api-Token: <votre_token>
+  Paramètre URL : ?token=<votre_token>
+
+Format de réponse :
+  Par défaut : JSON
+  XML        : ajouter ?format=xml à l'URL
+
+Endpoints :
+
+  GET /api/articles
+    Retourne tous les articles publiés.
+    Champs : id, titre, slug, resume, categorie, auteur, publie_le
+
+  GET /api/articles/categories
+    Retourne tous les articles groupés par catégorie.
+
+  GET /api/articles/categorie/{slug}
+    Retourne les articles d'une catégorie identifiée par son slug.
+
+Codes de retour HTTP :
+  200  Succès
+  401  Token manquant ou invalide
+
+
+SERVICE SOAP
+------------
+
+Endpoint : POST http://<SERVEUR>/soap
+WSDL     : GET  http://<SERVEUR>/soap
+
+Voir CLIENT_DEVELOPER_GUIDE.txt pour le détail des méthodes SOAP.
+
+Méthodes disponibles :
+  authentifierUtilisateur(email, password)
+  listerUtilisateurs(token)
+  ajouterUtilisateur(token, nom, email, password, role)
+  modifierUtilisateur(token, id, nom, email, role)
+  supprimerUtilisateur(token, id)
+
+
+TOKENS API
+----------
+
+Les tokens sont générés depuis le back-office : /admin/tokens
+
+  - Chaque token a un nom descriptif (ex: "Application Mobile")
+  - Le token en clair n'est affiché qu'une seule fois, à la génération
+  - Les tokens peuvent être activés, désactivés ou supprimés
+  - Seuls les administrateurs peuvent gérer les tokens
+
+
+DÉPLOIEMENT
+-----------
+
+Prérequis :
+  - PHP 8.2 avec extensions : pdo_pgsql, soap, zip
+  - Composer 2
+  - PostgreSQL
+
+Variables d'environnement requises :
+  APP_KEY      (générer avec php artisan key:generate)
+  APP_URL      (URL publique du serveur)
+  DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
+
+Initialisation :
+  composer install --no-dev --optimize-autoloader
+  php artisan migrate --force
+  php artisan storage:link
+
+Fichier Docker disponible : Dockerfile
+Fichier Render disponible : render.yaml
+
+
+FICHIERS IMPORTANTS
+-------------------
+
+  .env.example               Variables d'environnement (modèle)
+  Dockerfile                 Image Docker pour déploiement conteneurisé
+  render.yaml                Configuration Render (hébergement gratuit)
+  CLIENT_DEVELOPER_GUIDE.txt Guide d'intégration du service SOAP
+  tests_services/            Scripts de test REST et SOAP (PHP)
